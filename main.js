@@ -4,7 +4,7 @@ const { createMenu } = require("./helpers/ui")
 const { decryptWithGamma } = require("./helpers/gammaEncrypting")
 const { createHash } = require("./helpers/hash")
 
-const menu = () => {
+const mainMenu = () => {
     const actions = [
         { action: 1, name: "For vote", func: voter },
         { action: 2, name: "For cec", func: cec },
@@ -13,11 +13,11 @@ const menu = () => {
 }
 
 const main = () => {
-    menu()
+    mainMenu()
 
     return
 }
 console.clear()
 main()
 
-console.log()
+

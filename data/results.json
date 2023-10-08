@@ -1,9 +1,5 @@
 {
-  "voters": [
-    {
-      "candidateId": "1",
-      "voterId": ""
-    },
+  "ballots": [
     {
       "candidateId": "FS\u0007^\fT",
       "voterId": 1

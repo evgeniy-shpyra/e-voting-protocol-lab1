@@ -16,11 +16,11 @@ const globalData = {
 const voterHasVoted = async (voter) => {
     const result = await getResults()
 
-    const foundVotedVote = result.voters.find((item) => item.id === voter.id)
+    const foundVotedVote = result.ballots.find((item) => item.voterId === voter.id)
     if (!voter.canVote) {
         return {
             canVote: false,
-            massage: "You can't vote until you're 18",
+            massage: "You can't vote",
         }
     }
 
@@ -127,6 +127,10 @@ const vote = async () => {
         signature,
         publicKey: globalData.publicKey,
     })
+
+    console.log("Ваш голос успішно записаний")
+
+    mainMenu()
 }
 
 const voter = async () => {
@@ -136,7 +140,7 @@ const voter = async () => {
     globalData.voter = voter
 
     if (!voter) {
-        console.log("Incorrect password")
+        console.log("Incorrect password or name")
         return
     }
 

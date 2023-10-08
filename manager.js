@@ -1,6 +1,9 @@
 const fs = require("fs")
 const { calculateSignatureHash } = require("./helpers/hash")
 const { generateSignature, verifySignature } = require("./helpers/RSASignature")
+const { candidatesData } = require("./data/candidates")
+const { votersData } = require("./data/voters")
+const { decryptWithGamma } = require("./helpers/gammaEncrypting")
 
 const resultsPath = "data/results.json"
 
@@ -15,6 +18,47 @@ const getResults = () => {
             resolve(jsonData)
         })
     })
+}
+
+const seeResultAndDecrypt = async (keyForDecryption) => {
+    const encryptedResults = await getResults()
+
+    let results = []
+
+    encryptedResults.ballots.forEach((ballot) => {
+        const candidateId = decryptWithGamma(
+            ballot.candidateId,
+            keyForDecryption
+        )
+        let foundCandidate = candidatesData.find(
+            (item) => item.id === candidateId
+        )
+        if (foundCandidate)
+            results.push({
+                candidate: decryptWithGamma(
+                    ballot.candidateId,
+                    keyForDecryption
+                ),
+                voter: votersData.find((item) => item.id === ballot.voterId)
+                    .name,
+            })
+    })
+
+    if(!results.length){
+        console.log('Не має бюлетнів')
+        return
+    }
+    results.forEach(result => {
+        console.log(`${result.voter} за ${candidatesData.find(candidate => candidate.id === result.candidate).name}`)
+    })
+
+    console.log('\n')
+
+    candidatesData.forEach(candidate => {
+        console.log(`${candidate.name}: ${results.filter(result => result.candidate ===  candidate.id).length}`)
+    })
+
+    // Додати вихід в меню 
 }
 
 const generateVoterSignature = (voter, publicKey, privateKey) => {
@@ -43,15 +87,19 @@ const recordVote = async ({
 
     const addResults = JSON.parse(data)
 
-    addResults.voters.push({
+    addResults.ballots.push({
         candidateId: encryptedCandidate,
         voterId: voter.id,
     })
 
     const addResultsJson = JSON.stringify(addResults, null, 2)
-  
+
     await fs.writeFileSync(resultsPath, addResultsJson, "utf8")
-  
 }
 
-module.exports = { getResults, generateVoterSignature, recordVote }
+module.exports = {
+    getResults,
+    generateVoterSignature,
+    recordVote,
+    seeResultAndDecrypt,
+}

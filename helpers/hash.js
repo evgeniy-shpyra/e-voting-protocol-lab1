@@ -4,7 +4,7 @@ const createHash = (data) => {
     const hash = crypto.createHash("sha256")
     hash.update(data)
     const hashedValue = hash.digest("hex")
-
+    
     return hashedValue
 }
 

@@ -1,5 +1,9 @@
 const readline = require("readline")
-const { verifyCec } = require("./auth")
+const { cecData } = require("./data/cec")
+const { compareHash, createHash } = require("./helpers/hash")
+const { simpleRead } = require("./helpers/ui")
+const { seeResultAndDecrypt } = require("./manager")
+
 
 const loginCec = () => {
     const rl = readline.createInterface({
@@ -17,17 +21,20 @@ const loginCec = () => {
     })
 }
 
+
 const cec = async () => {
-    const cecData = await loginCec()
-    if (verifyCec(cecData)) {
-        console.log("auth")
-    } else {
-       
+    const { password } = await loginCec()
+
+    if (!compareHash(password, cecData.password)) {
         console.log("Incorrect password")
         return
     }
+    console.clear()
+    const keyForDecryption = await simpleRead("Enter key for decryption: ")
+    seeResultAndDecrypt(createHash(keyForDecryption))
+
 }
 
 module.exports = {
-  cec,
+    cec,
 }
