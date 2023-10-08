@@ -20,14 +20,14 @@ const voterHasVoted = async (voter) => {
     if (!voter.canVote) {
         return {
             canVote: false,
-            massage: "лол, ти не можеш голосувати, не має 18?",
+            massage: "You can't vote until you're 18",
         }
     }
 
     if (foundVotedVote) {
         return {
             canVote: false,
-            massage: "Самий розумний, видихай ти вже голосував",
+            massage: "The smartest, exhale, you have already voted",
         }
     }
 
@@ -88,16 +88,16 @@ const vote = async () => {
 
     if (!globalData.privateKey || !globalData.publicKey) {
         console.clear()
-        console.log("!Спочатку сгенеркй keys\n")
+        console.log("!First generate keys\n")
         menu()
         return
     }
     console.clear()
-    console.log("Вибери кандидата:\n")
+    console.log("Choose a candidate:\n")
     candidatesData.forEach((candidate, index) => {
         console.log(`${candidate.name}: ${index + 1}`)
     })
-    const chose = await simpleRead("\nГолосую за: ")
+    const chose = await simpleRead("\nI vote for: ")
 
     if (
         Number.isNaN(chose) ||

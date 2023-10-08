@@ -8,7 +8,7 @@ const getResults = () => {
     return new Promise((resolve, reject) => {
         fs.readFile(resultsPath, "utf8", (err, data) => {
             if (err) {
-                console.error("Помилка читання файлу:", err)
+                console.error("Error reading file:", err)
                 return
             }
             const jsonData = JSON.parse(data)
