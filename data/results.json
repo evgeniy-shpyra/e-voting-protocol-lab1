@@ -1,0 +1,12 @@
+{
+  "voters": [
+    {
+      "candidateId": "1",
+      "voterId": ""
+    },
+    {
+      "candidateId": "FS\u0007^\fT",
+      "voterId": 1
+    }
+  ]
+}
