@@ -16,7 +16,9 @@ const globalData = {
 const voterHasVoted = async (voter) => {
     const result = await getResults()
 
-    const foundVotedVote = result.ballots.find((item) => item.voterId === voter.id)
+    const foundVotedVote = result.ballots.find(
+        (item) => item.voterId === voter.id
+    )
     if (!voter.canVote) {
         return {
             canVote: false,
@@ -105,32 +107,67 @@ const vote = async () => {
         Number(chose) > candidatesData.length
     )
         return
-    const selectedCandidate = candidatesData[Number(chose)]
+    const selectedCandidate = candidatesData[Number(chose - 1)]
 
+    const keys = {
+        publicKey: {
+            E: "",
+            N: "",
+        },
+        privateKey: {
+            D: "",
+            N: "",
+        },
+    }
+
+    console.clear()
+    console.log("Your generated keys: ")
+    console.log(
+        `Public key:\nE: ${globalData.publicKey.E}\nN: ${globalData.publicKey.N}\n`
+    )
+    console.log(
+        `Private key:\nD: ${globalData.privateKey.D}\nN: ${globalData.privateKey.N}\n`
+    )
+
+    console.log("Enter your public key:")
+    keys.publicKey.E = await simpleRead("E: ")
+    keys.publicKey.N = await simpleRead("N: ")
+
+    console.log("Enter your private key:")
+    keys.privateKey.D = await simpleRead("D: ")
+    keys.privateKey.N = await simpleRead("N: ")
+
+    if (
+        Number.isNaN(keys.publicKey.E) ||
+        Number.isNaN(keys.publicKey.N) ||
+        Number.isNaN(keys.privateKey.D) ||
+        Number.isNaN(keys.privateKey.N)
+    ) {
+        console.log("Incorrect input, it isn't a keys")
+        menu(true)
+    }
     console.clear()
 
     const cecPass = await simpleRead("Enter cec key: ")
     const hashCec = createHash(cecPass)
 
-    // Кодування ключом бюлетня ЦВК
+    // Кодування ключем бюлетня ЦВК
     const encryptedCandidate = encryptWithGamma(selectedCandidate.id, hashCec)
 
     const signature = generateVoterSignature(
         globalData.voter,
-        globalData.publicKey,
-        globalData.privateKey
+        keys.publicKey,
+        keys.privateKey
     )
 
-    recordVote({
+    const isRecorded = await recordVote({
         voter: globalData.voter,
         encryptedCandidate,
         signature,
-        publicKey: globalData.publicKey,
+        publicKey: keys.publicKey,
     })
 
-    console.log("Ваш голос успішно записаний")
-
-    mainMenu()
+    if (isRecorded) console.log("Your voice has been successfully recorded")
 }
 
 const voter = async () => {

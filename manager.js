@@ -81,6 +81,7 @@ const recordVote = async ({
 }) => {
     if (!verifyVoterSignature(voter, publicKey, signature)) {
         console.log("Signature is invalid")
+        return false
     }
 
     const data = await fs.readFileSync(resultsPath, "utf8")
@@ -95,6 +96,8 @@ const recordVote = async ({
     const addResultsJson = JSON.stringify(addResults, null, 2)
 
     await fs.writeFileSync(resultsPath, addResultsJson, "utf8")
+
+    return true
 }
 
 module.exports = {
