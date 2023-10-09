@@ -13,6 +13,7 @@ const createMenu = async (actions, withClear) => {
     rl.question("Select action: ", (data) => {
         const selectedAction = actions.find((item) => item.action == data)
         if (!selectedAction) {
+            rl.close()
             withClear && console.clear()
             return
         }
